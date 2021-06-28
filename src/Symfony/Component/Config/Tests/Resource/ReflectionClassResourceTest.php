@@ -121,6 +121,11 @@ EOPHP;
     {
         yield [false, 0, "// line change\n\n"];
         yield [true, 0, '/** class docblock */'];
+
+        if (\PHP_VERSION_ID >= 80000) {
+            yield [true, 0, '#[Foo]'];
+        }
+
         yield [true, 1, 'abstract class %s'];
         yield [true, 1, 'final class %s'];
         yield [true, 1, 'class %s extends Exception'];
@@ -140,6 +145,12 @@ EOPHP;
         yield [false, 11, "public function pub(\$arg = null) {\nreturn 123;\n}"];
         yield [true, 12, '/** prot docblock */'];
         yield [true, 13, 'protected function prot($a = [123]) {}'];
+
+        if (\PHP_VERSION_ID >= 80000) {
+            yield [true, 13, '#[Foo] protected function prot($a = []) {}'];
+            yield [true, 13, 'protected function prot(#[Foo] $a = []) {}'];
+        }
+
         yield [false, 14, '/** priv docblock */'];
         yield [false, 15, ''];
 
@@ -151,6 +162,7 @@ EOPHP;
 
         yield [true, 17, 'public function ccc($bar = 187) {}'];
         yield [true, 17, 'public function ccc($bar = ANOTHER_ONE_THAT_WILL_NEVER_BE_DEFINED_CCCCCCCCC) {}'];
+        yield [true, 17, 'public function ccc($bar = parent::BOOM) {}'];
         yield [true, 17, null, static function () { \define('A_CONSTANT_THAT_FOR_SURE_WILL_NEVER_BE_DEFINED_CCCCCC', 'foo'); }];
     }
 
